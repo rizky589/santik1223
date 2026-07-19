@@ -10,7 +10,7 @@ import { Toasts } from '../components/animations/Motion'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
-const JAM_BUKA   = { h: 8,  m: 0 }
+const JAM_BUKA   = { h: 7,  m: 0 }
 const JAM_BATAS  = { h: 8,  m: 0 }
 
 function isPresensiOpen() {
@@ -72,7 +72,7 @@ export default function Presensi() {
 
   const handlePresensi = async () => {
     if (!kegiatan.trim()) return toast.warning('Kegiatan hari ini wajib diisi.')
-    if (!isPresensiOpen()) return toast.warning('Presensi belum dibuka. Mulai 08:00 WIB.')
+    if (!isPresensiOpen()) return toast.warning('Presensi belum dibuka. Mulai 07:00 WIB.')
     if (sudahAbsen) return toast.warning('Anda sudah presensi hari ini.')
 
     setLoading(true)
@@ -197,7 +197,7 @@ export default function Presensi() {
 
         {!presensiOpen ? (
           <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm">
-            Presensi belum dibuka. Mulai pukul 08:00 WIB.
+            Presensi belum dibuka. Mulai pukul 07:00 WIB.
           </div>
         ) : sudahAbsen ? (
           <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm">
