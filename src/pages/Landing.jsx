@@ -83,8 +83,8 @@ export default function Landing() {
         {/* Hero Section */}
         <section className="min-h-[80vh] flex flex-col items-center justify-center px-4 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
             className="max-w-3xl"
           >
