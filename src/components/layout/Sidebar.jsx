@@ -82,7 +82,7 @@ export default function Sidebar({ open, onClose }) {
         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between px-1 py-1 border-b border-white/8">
+        <div className="flex items-center justify-between px-5 py-5 border-b border-white/8">
           <div className="flex items-center gap-1">
             <div className="w-8 h-8 flex items-center justify-center">
               <img src="/assets/logo_bps.png" alt="Logo BPS" className="w-full h-full object-contain drop-shadow-md" />

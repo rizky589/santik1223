@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { LogIn, Users, FileText, ClipboardList, Calendar, MapPin, Phone, Mail, Clock } from 'lucide-react'
 import Background3D from '../components/three/Background3D'
+import AccessibilityWidget from '../components/AccessibilityWidget'
 
 export default function Landing() {
   const navigate = useNavigate()
@@ -82,27 +83,29 @@ export default function Landing() {
         
         {/* Hero Section */}
         <section className="min-h-[80vh] flex flex-col items-center justify-center px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="max-w-3xl"
-          >
+          <div className="max-w-3xl">
             <div className="flex items-center justify-center gap-6 mb-8">
               <img src="/assets/ppid.png" alt="PPID" className="h-16 md:h-20 object-contain" />
               <img src="/assets/pst2.png" alt="PST2" className="h-20 md:h-28 object-contain" />
             </div>
-            <h1 className="text-5xl md:text-5xl font-display font-black mb-6">
-              PeLayanan <span className="text-gradient">Statistik</span> Terpadu
-            </h1>
-            <p className="text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto">
-              Sistem Antrian Statistik (SANTIK) memberikan kemudahan akses layanan PST dan PPID di BPS Kabupaten Labuhanbatu Utara.
-              Di website ini Anda dapat menemukan berbagai layanan yang kami sediakan dan informasi kontak yang dapat dihubungi. #MelayaniDenganHati❤️
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              
-            </div>
-          </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: "-100vw" }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, type: "spring", bounce: 0.2 }}
+            >
+              <h1 className="text-5xl md:text-5xl font-display font-black mb-6">
+                PeLayanan <span className="text-gradient">Statistik</span> Terpadu
+              </h1>
+              <p className="text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto">
+                Sistem Antrian Statistik (SANTIK) memberikan kemudahan akses layanan PST dan PPID di BPS Kabupaten Labuhanbatu Utara.
+                Di website ini Anda dapat menemukan berbagai layanan yang kami sediakan dan informasi kontak yang dapat dihubungi. #MelayaniDenganHati❤️
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                
+              </div>
+            </motion.div>
+          </div>
         </section>
 
         {/* Layanan Section */}
@@ -216,6 +219,9 @@ export default function Landing() {
           </p>
         </footer>
       </div>
+
+      {/* Aksesibilitas Widget */}
+      <AccessibilityWidget />
     </div>
   )
 }
