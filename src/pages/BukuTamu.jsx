@@ -14,9 +14,8 @@ const LAYANAN_LIST = [
   'Akses Produk Statistik pada Website',
   'Data Mikro', 'Pengaduan Masyarakat', 'Lainnya',
 ]
-const PENDIDIKAN_LIST = ['SMA', 'D1/D2/D3', 'S1', 'S2', 'S3']
-
 const PEGAWAI_LIST = [
+  'Tidak Ada',
   'Saip Iskandar Hasibuan SST, M.Si',
   'Ruslan Abdi SE',
   'Darmansyah',
@@ -41,7 +40,7 @@ const PEGAWAI_LIST = [
 ]
 
 const INIT = {
-  nama: '', email: '', jenis_kelamin: 'Laki-laki', pendidikan: 'S1',
+  nama: '', email: '', jenis_kelamin: 'Laki-laki',
   instansi: '', pekerjaan: '', alamat: '', kontak: '',
   layanan: LAYANAN_LIST[0], pegawai_tujuan: PEGAWAI_LIST[0], keperluan: '', catatan: '',
 }
@@ -313,7 +312,6 @@ export default function BukuTamu() {
         nama_lengkap:   nama,
         email,
         jenis_kelamin:  form.jenis_kelamin,
-        pendidikan:     form.pendidikan,
         instansi,
         pekerjaan,
         alamat,
@@ -376,12 +374,9 @@ export default function BukuTamu() {
 
       <RevealText>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">
-            <BookOpen size={20} className="text-violet-400" />
-          </div>
           <div>
             <h1 className="page-title">Buku Tamu Digital</h1>
-            <p className="page-subtitle">Isi data pengunjung layanan PST &amp; PPID</p>
+            <p className="page-subtitle">Isi data pengunjung layanan PST</p>
           </div>
         </div>
       </RevealText>
@@ -403,28 +398,20 @@ export default function BukuTamu() {
               value={form.email} onChange={e => set('email', e.target.value)} required />
           </div>
 
-          {/* Jenis Kelamin + Pendidikan */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="input-label">Jenis Kelamin</label>
-              <div className="flex gap-2">
-                {['Laki-laki', 'Perempuan'].map(j => (
-                  <motion.button key={j} type="button"
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => set('jenis_kelamin', j)}
-                    className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition-all
-                      ${form.jenis_kelamin === j
-                        ? 'bg-brand-500/25 border-brand-500/50 text-brand-300'
-                        : 'glass border-white/10 text-white/50'}`}
-                  >{j}</motion.button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className="input-label">Pendidikan Tertinggi</label>
-              <select className="input-field" value={form.pendidikan} onChange={e => set('pendidikan', e.target.value)}>
-                {PENDIDIKAN_LIST.map(p => <option key={p} value={p} className="bg-surface-2">{p}</option>)}
-              </select>
+          {/* Jenis Kelamin */}
+          <div>
+            <label className="input-label">Jenis Kelamin</label>
+            <div className="flex gap-2">
+              {['Laki-laki', 'Perempuan'].map(j => (
+                <motion.button key={j} type="button"
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => set('jenis_kelamin', j)}
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-all
+                    ${form.jenis_kelamin === j
+                      ? 'bg-brand-500/25 border-brand-500/50 text-brand-300'
+                      : 'glass border-white/10 text-white/50'}`}
+                >{j}</motion.button>
+              ))}
             </div>
           </div>
 

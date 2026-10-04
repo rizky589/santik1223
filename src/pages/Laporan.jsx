@@ -47,7 +47,7 @@ export default function Laporan() {
       wsData = rows.map((r,i) => ({
         No: i+1,
         Nama: r.nama_lengkap, Email: r.email,
-        'Jenis Kelamin': r.jenis_kelamin, Pendidikan: r.pendidikan,
+        'Jenis Kelamin': r.jenis_kelamin,
         Instansi: r.instansi, Kontak: r.kontak,
         Layanan: r.layanan, Catatan: r.catatan || '-',
         'Waktu Masuk': r.waktu_masuk ? formatDate(r.waktu_masuk, 'dd-MM-yyyy HH:mm') : '-',
@@ -78,10 +78,10 @@ export default function Laporan() {
 
     if (reportType === 'PST') {
       autoTable(doc, {
-        head: [['No','Nama','Email','JK','Pendidikan','Instansi','Layanan','Waktu']],
+        head: [['No','Nama','Email','JK','Instansi','Layanan','Waktu']],
         body: rows.map((r,i) => [
           i+1, r.nama_lengkap, r.email, r.jenis_kelamin,
-          r.pendidikan, r.instansi, r.layanan,
+          r.instansi, r.layanan,
           r.waktu_masuk ? formatDate(r.waktu_masuk, 'dd-MM-yyyy') : '-',
         ]),
         startY: 32,
@@ -181,7 +181,7 @@ export default function Laporan() {
                 {reportType === 'PST' ? (
                   <tr>
                     <th>No</th><th>Nama</th><th>Email</th><th>JK</th>
-                    <th>Pendidikan</th><th>Instansi</th><th>Layanan</th>
+                    <th>Instansi</th><th>Layanan</th>
                     <th>Kontak</th><th>Catatan</th><th>Waktu</th>
                   </tr>
                 ) : (
@@ -205,7 +205,6 @@ export default function Laporan() {
                       <>
                         <td className="text-xs text-white/60">{r.email}</td>
                         <td><span className={`badge text-[10px] ${r.jenis_kelamin==='Laki-laki'?'badge-info':'badge-purple'}`}>{r.jenis_kelamin==='Laki-laki'?'L':'P'}</span></td>
-                        <td className="text-xs">{r.pendidikan}</td>
                         <td className="text-xs max-w-[140px] truncate">{r.instansi}</td>
                         <td><span className="badge badge-default text-[10px] whitespace-nowrap">{r.layanan}</span></td>
                         <td className="font-mono text-xs">{r.kontak}</td>
