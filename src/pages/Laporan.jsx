@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { FileText, Download, Filter, RefreshCw } from 'lucide-react'
+import { FileText, Download, Filter, RefreshCw, Layers } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatDate } from '../lib/utils'
-import { RevealText, AnimatedCard } from '../components/animations/Motion'
+import { RevealText, AnimatedCard, Toasts } from '../components/animations/Motion'
 import { useToast } from '../hooks/useToast'
-import { Toasts } from '../components/animations/Motion'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
@@ -16,6 +15,7 @@ export default function Laporan() {
   const [loading, setLoading] = useState(true)
   const [startDate, setStartDate] = useState('')
   const [endDate,   setEndDate]   = useState('')
+  const [reportType, setReportType] = useState('PST') // 'PST' or 'PPID'
 
   useEffect(() => {
     const today = new Date().toISOString().slice(0,10)
@@ -24,26 +24,27 @@ export default function Laporan() {
     setEndDate(today)
   }, [])
 
-  useEffect(() => { if (startDate && endDate) fetchData() }, [startDate, endDate])
+  useEffect(() => { if (startDate && endDate) fetchData() }, [startDate, endDate, reportType])
 
   const fetchData = async () => {
     setLoading(true)
+    const tableName = reportType === 'PST' ? 'buku_tamu' : 'ppid_permohonan'
     const { data, error } = await supabase
-      .from('buku_tamu')
+      .from(tableName)
       .select('*')
-      .gte('waktu_selesai', startDate + 'T00:00:00')
-      .lte('waktu_selesai', endDate   + 'T23:59:59')
-      .order('waktu_selesai', { ascending: false })
+      .gte('waktu_masuk', startDate + 'T00:00:00')
+      .lte('waktu_masuk', endDate   + 'T23:59:59')
+      .order('waktu_masuk', { ascending: false })
+      
     if (error) toast.error('Gagal memuat data.')
     setRows(data || [])
     setLoading(false)
   }
 
-  const COLS = ['no_urut','nama_lengkap','email','jenis_kelamin','pendidikan','instansi','kontak','layanan','catatan']
-
   const downloadExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(
-      rows.map((r,i) => ({
+    let wsData
+    if (reportType === 'PST') {
+      wsData = rows.map((r,i) => ({
         No: i+1,
         Nama: r.nama_lengkap, Email: r.email,
         'Jenis Kelamin': r.jenis_kelamin, Pendidikan: r.pendidikan,
@@ -51,41 +52,65 @@ export default function Laporan() {
         Layanan: r.layanan, Catatan: r.catatan || '-',
         'Waktu Masuk': r.waktu_masuk ? formatDate(r.waktu_masuk, 'dd-MM-yyyy HH:mm') : '-',
       }))
-    )
+    } else {
+      wsData = rows.map((r,i) => ({
+        No: i+1,
+        Nama: r.nama_lengkap, 'No Identitas': r.no_identitas, 'No WA': r.no_wa,
+        Instansi: r.instansi, Pekerjaan: r.pekerjaan, Alamat: r.alamat,
+        'Rincian Informasi': r.rincian_informasi, 'Tujuan Penggunaan': r.tujuan_penggunaan,
+        'Cara Memperoleh': r.cara_memperoleh, 'Cara Salinan': r.cara_salinan,
+        'Waktu Masuk': r.waktu_masuk ? formatDate(r.waktu_masuk, 'dd-MM-yyyy HH:mm') : '-',
+      }))
+    }
+    const ws = XLSX.utils.json_to_sheet(wsData)
     const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'Laporan')
-    XLSX.writeFile(wb, `laporan_${startDate}_${endDate}.xlsx`)
+    XLSX.utils.book_append_sheet(wb, ws, `Laporan ${reportType}`)
+    XLSX.writeFile(wb, `laporan_${reportType}_${startDate}_${endDate}.xlsx`)
   }
 
   const downloadPDF = () => {
     const doc = new jsPDF({ orientation: 'landscape' })
     doc.setFontSize(13)
-    doc.text('LAPORAN PELAYANAN PST', 148, 14, { align: 'center' })
+    doc.text(`LAPORAN PELAYANAN ${reportType}`, 148, 14, { align: 'center' })
     doc.setFontSize(9)
     doc.text(`Periode: ${startDate} s/d ${endDate}`, 148, 21, { align: 'center' })
     doc.text('BADAN PUSAT STATISTIK — KABUPATEN LABUHANBATU UTARA', 148, 27, { align: 'center' })
 
-    autoTable(doc, {
-      head: [['No','Nama','Email','JK','Pendidikan','Instansi','Layanan','Waktu']],
-      body: rows.map((r,i) => [
-        i+1, r.nama_lengkap, r.email, r.jenis_kelamin,
-        r.pendidikan, r.instansi, r.layanan,
-        r.waktu_masuk ? formatDate(r.waktu_masuk, 'dd-MM-yyyy') : '-',
-      ]),
-      startY: 32,
-      styles: { fontSize: 7.5, cellPadding: 2 },
-      headStyles: { fillColor: [99,102,241], fontSize: 8 },
-      alternateRowStyles: { fillColor: [245,245,255] },
-    })
+    if (reportType === 'PST') {
+      autoTable(doc, {
+        head: [['No','Nama','Email','JK','Pendidikan','Instansi','Layanan','Waktu']],
+        body: rows.map((r,i) => [
+          i+1, r.nama_lengkap, r.email, r.jenis_kelamin,
+          r.pendidikan, r.instansi, r.layanan,
+          r.waktu_masuk ? formatDate(r.waktu_masuk, 'dd-MM-yyyy') : '-',
+        ]),
+        startY: 32,
+        styles: { fontSize: 7.5, cellPadding: 2 },
+        headStyles: { fillColor: [99,102,241], fontSize: 8 },
+        alternateRowStyles: { fillColor: [245,245,255] },
+      })
+    } else {
+      autoTable(doc, {
+        head: [['No','Nama','No Identitas','No WA','Instansi','Pekerjaan','Rincian Informasi','Waktu']],
+        body: rows.map((r,i) => [
+          i+1, r.nama_lengkap, r.no_identitas, r.no_wa,
+          r.instansi, r.pekerjaan, r.rincian_informasi,
+          r.waktu_masuk ? formatDate(r.waktu_masuk, 'dd-MM-yyyy') : '-',
+        ]),
+        startY: 32,
+        styles: { fontSize: 7.5, cellPadding: 2 },
+        headStyles: { fillColor: [99,102,241], fontSize: 8 },
+        alternateRowStyles: { fillColor: [245,245,255] },
+      })
+    }
 
-    // Signature
     const finalY = doc.lastAutoTable.finalY + 12
     doc.setFontSize(9)
     const today = new Date()
     doc.text(`Gunting Saga, ${today.getDate()}-${today.getMonth()+1}-${today.getFullYear()}`, 148, finalY, { align:'center' })
     doc.text('Kepala BPS Kabupaten Labuhanbatu Utara', 148, finalY+7, { align:'center' })
     doc.text('Saip Iskandar Hasibuan, SST, M.Si', 148, finalY+28, { align:'center' })
-    doc.save(`laporan_buku_tamu_${startDate}_${endDate}.pdf`)
+    doc.save(`laporan_${reportType}_${startDate}_${endDate}.pdf`)
   }
 
   return (
@@ -98,8 +123,8 @@ export default function Laporan() {
             <FileText size={20} className="text-emerald-400" />
           </div>
           <div>
-            <h1 className="page-title">Laporan Buku Tamu Digital</h1>
-            <p className="page-subtitle">Export data pengunjung PST & PPID ke PDF / Excel</p>
+            <h1 className="page-title">Laporan Data Pengunjung</h1>
+            <p className="page-subtitle">Export data pelayanan PST & PPID ke PDF / Excel</p>
           </div>
         </div>
       </RevealText>
@@ -107,6 +132,13 @@ export default function Laporan() {
       {/* Filter */}
       <AnimatedCard className="glass-md rounded-2xl p-5 border border-white/8">
         <div className="flex flex-wrap items-end gap-4">
+          <div className="flex-1 min-w-[140px]">
+            <label className="input-label flex items-center gap-1.5"><Layers size={11} /> Jenis Laporan</label>
+            <select className="input-field" value={reportType} onChange={e => setReportType(e.target.value)}>
+              <option value="PST" className="bg-surface-2">Pelayanan Statistik Terpadu (PST)</option>
+              <option value="PPID" className="bg-surface-2">Informasi Publik (PPID)</option>
+            </select>
+          </div>
           <div className="flex-1 min-w-[140px]">
             <label className="input-label flex items-center gap-1.5"><Filter size={11} /> Dari Tanggal</label>
             <input type="date" className="input-field" value={startDate}
@@ -131,7 +163,7 @@ export default function Laporan() {
         </div>
         {!loading && (
           <p className="text-xs text-white/40 mt-3">
-            Menampilkan <span className="text-brand-400 font-semibold">{rows.length}</span> data dari {startDate} s.d. {endDate}
+            Menampilkan <span className="text-brand-400 font-semibold">{rows.length}</span> data {reportType} dari {startDate} s.d. {endDate}
           </p>
         )}
       </AnimatedCard>
@@ -146,11 +178,19 @@ export default function Laporan() {
           <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
             <table className="data-table min-w-[900px]">
               <thead>
-                <tr>
-                  <th>No</th><th>Nama</th><th>Email</th><th>JK</th>
-                  <th>Pendidikan</th><th>Instansi</th><th>Layanan</th>
-                  <th>Kontak</th><th>Catatan</th><th>Waktu</th>
-                </tr>
+                {reportType === 'PST' ? (
+                  <tr>
+                    <th>No</th><th>Nama</th><th>Email</th><th>JK</th>
+                    <th>Pendidikan</th><th>Instansi</th><th>Layanan</th>
+                    <th>Kontak</th><th>Catatan</th><th>Waktu</th>
+                  </tr>
+                ) : (
+                  <tr>
+                    <th>No</th><th>Nama</th><th>No Identitas</th><th>No WA</th>
+                    <th>Pekerjaan</th><th>Instansi</th><th>Rincian Informasi</th>
+                    <th>Tujuan Penggunaan</th><th>Cara Peroleh</th><th>Waktu</th>
+                  </tr>
+                )}
               </thead>
               <tbody>
                 {rows.length === 0 ? (
@@ -161,13 +201,27 @@ export default function Laporan() {
                   <tr key={r.id}>
                     <td className="text-white/40 text-xs">{i+1}</td>
                     <td className="font-medium whitespace-nowrap">{r.nama_lengkap}</td>
-                    <td className="text-xs text-white/60">{r.email}</td>
-                    <td><span className={`badge text-[10px] ${r.jenis_kelamin==='Laki-laki'?'badge-info':'badge-purple'}`}>{r.jenis_kelamin==='Laki-laki'?'L':'P'}</span></td>
-                    <td className="text-xs">{r.pendidikan}</td>
-                    <td className="text-xs max-w-[140px] truncate">{r.instansi}</td>
-                    <td><span className="badge badge-default text-[10px] whitespace-nowrap">{r.layanan}</span></td>
-                    <td className="font-mono text-xs">{r.kontak}</td>
-                    <td className="text-xs text-white/50 max-w-[120px] truncate">{r.catatan || '-'}</td>
+                    {reportType === 'PST' ? (
+                      <>
+                        <td className="text-xs text-white/60">{r.email}</td>
+                        <td><span className={`badge text-[10px] ${r.jenis_kelamin==='Laki-laki'?'badge-info':'badge-purple'}`}>{r.jenis_kelamin==='Laki-laki'?'L':'P'}</span></td>
+                        <td className="text-xs">{r.pendidikan}</td>
+                        <td className="text-xs max-w-[140px] truncate">{r.instansi}</td>
+                        <td><span className="badge badge-default text-[10px] whitespace-nowrap">{r.layanan}</span></td>
+                        <td className="font-mono text-xs">{r.kontak}</td>
+                        <td className="text-xs text-white/50 max-w-[120px] truncate">{r.catatan || '-'}</td>
+                      </>
+                    ) : (
+                      <>
+                        <td className="text-xs text-white/60 font-mono">{r.no_identitas}</td>
+                        <td className="text-xs font-mono">{r.no_wa}</td>
+                        <td className="text-xs max-w-[120px] truncate">{r.pekerjaan}</td>
+                        <td className="text-xs max-w-[120px] truncate">{r.instansi}</td>
+                        <td className="text-xs max-w-[150px] truncate" title={r.rincian_informasi}>{r.rincian_informasi}</td>
+                        <td className="text-xs max-w-[150px] truncate" title={r.tujuan_penggunaan}>{r.tujuan_penggunaan}</td>
+                        <td className="text-xs max-w-[100px] truncate">{r.cara_memperoleh}</td>
+                      </>
+                    )}
                     <td className="text-xs whitespace-nowrap font-mono">{r.waktu_masuk ? formatDate(r.waktu_masuk,'dd-MM-yy HH:mm') : '-'}</td>
                   </tr>
                 ))}
