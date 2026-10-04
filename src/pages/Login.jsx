@@ -5,6 +5,7 @@ import { LogIn, Eye, EyeOff, Lock, User, Sparkles, Sun, Moon, Monitor } from 'lu
 import Lottie from 'lottie-react'
 import Background3D from '../components/three/Background3D'
 import { useAuthStore } from '../store/authStore'
+import { Turnstile } from '@marsidev/react-turnstile'
 
 // Inline minimal Lottie JSON (wave animation) — replaced by real file in /public
 const fallbackLottie = {
@@ -20,6 +21,7 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [showPw,   setShowPw]   = useState(false)
   const [lottieData, setLottieData] = useState(null)
+  const [captchaToken, setCaptchaToken] = useState(null)
   
   // Theme toggle state (UI only for now)
   const [theme, setTheme] = useState('dark')
@@ -135,11 +137,22 @@ export default function Login() {
                 </div>
               </div>
 
+              {/* Turnstile Captcha */}
+              <div className="flex justify-center mt-2">
+                <Turnstile
+                  siteKey="1x00000000000000000000AA" // GANTI DENGAN SITEKEY CLOUDFLARE ASLI MILIKMU
+                  onSuccess={(token) => setCaptchaToken(token)}
+                  onError={() => setCaptchaToken(null)}
+                  onExpire={() => setCaptchaToken(null)}
+                  options={{ theme: 'dark' }}
+                />
+              </div>
+
               {/* Submit */}
               <motion.button
                 id="login-submit"
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || !captchaToken}
                 className="btn-primary w-full py-3 mt-2"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
