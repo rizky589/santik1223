@@ -11,6 +11,7 @@ import InputAntrian      from './pages/InputAntrian'
 import PanggilAntrian    from './pages/PanggilAntrian'
 import MonitorAntrian    from './pages/MonitorAntrian'
 import BukuTamu          from './pages/BukuTamu'
+import PPID              from './pages/PPID'
 import DataPengunjung    from './pages/DataPengunjung'
 import Presensi          from './pages/Presensi'
 import Laporan           from './pages/Laporan'
@@ -36,6 +37,7 @@ export default function App() {
         {/* Public pages – accessible without login */}
         <Route element={<PublicLayout />}>
           <Route path="/buku-tamu"       element={<BukuTamu />} />
+          <Route path="/ppid"            element={<PPID />} />
           <Route path="/data-pengunjung" element={<DataPengunjung />} />
         </Route>
 

@@ -70,6 +70,9 @@ export default function Landing() {
                 <button onClick={() => navigate('/buku-tamu')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
                   Buku Tamu Digital
                 </button>
+                <button onClick={() => navigate('/ppid')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
+                  PPID (Informasi Publik)
+                </button>
                 <button onClick={() => navigate('/data-pengunjung')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
                   Statistik Data Pengunjung
                 </button>
