@@ -16,8 +16,6 @@ const NAV = [
   { to: '/input-antrian',     icon: ClipboardList,  label: 'Input Antrian',     group: 'antrian' },
   { to: '/panggil-antrian',   icon: Bell,           label: 'Panggil Antrian',   group: 'antrian' },
   { to: '/monitor-antrian',   icon: Monitor,        label: 'Monitor Antrian',   group: 'antrian' },
-  { to: '/buku-tamu',         icon: BookOpen,       label: 'Buku Tamu',         group: 'layanan' },
-  { to: '/data-pengunjung',   icon: Users,          label: 'Data Pengunjung',   group: 'layanan' },
   { to: '/presensi',          icon: Calendar,       label: 'Presensi',          group: 'layanan' },
   { to: '/jadwal-piket',      icon: CalendarDays,   label: 'Jadwal Piket',      group: 'layanan' },
   { to: '/laporan',           icon: FileText,       label: 'Laporan Antrian',   group: 'laporan' },

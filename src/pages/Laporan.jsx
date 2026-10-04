@@ -98,7 +98,7 @@ export default function Laporan() {
             <FileText size={20} className="text-emerald-400" />
           </div>
           <div>
-            <h1 className="page-title">Laporan Buku Tamu</h1>
+            <h1 className="page-title">Laporan Buku Tamu Digital</h1>
             <p className="page-subtitle">Export data pengunjung PST & PPID ke PDF / Excel</p>
           </div>
         </div>

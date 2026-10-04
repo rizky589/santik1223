@@ -67,7 +67,7 @@ export default function DataPengunjung() {
               <Users size={20} className="text-cyan-400" />
             </div>
             <div>
-              <h1 className="page-title">Data Pengunjung</h1>
+              <h1 className="page-title">Statistik Data Pengunjung</h1>
               <p className="page-subtitle">Rekap harian & bulanan (hari kerja)</p>
             </div>
           </div>

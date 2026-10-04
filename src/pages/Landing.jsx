@@ -14,7 +14,7 @@ export default function Landing() {
       icon: <Users size={24} className="text-brand-400" />
     },
     {
-      title: 'Buku Tamu',
+      title: 'Buku Tamu Digital',
       description: 'Pencatatan data pengunjung dan tujuan kedatangan secara digital.',
       icon: <FileText size={24} className="text-violet-400" />
     },
@@ -55,17 +55,24 @@ export default function Landing() {
             </div>
             
             <div className="flex items-center gap-8">
-              <div className="hidden md:flex items-center gap-8">
+            <div className="hidden md:flex items-center gap-8">
                 <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
                   Beranda
                 </button>
                 <button onClick={() => scrollToSection('layanan')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
                   Layanan
                 </button>
+                <button onClick={() => navigate('/buku-tamu')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
+                  Buku Tamu Digital
+                </button>
+                <button onClick={() => navigate('/data-pengunjung')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
+                  Statistik Data Pengunjung
+                </button>
                 <button onClick={() => scrollToSection('kontak')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
                   Kontak
                 </button>
               </div>
+
 
               <button 
                 onClick={() => navigate('/login')}
