@@ -52,9 +52,46 @@ export default function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-left">
+            <div className="flex items-center gap-3">
               <img src="/assets/logo_bps.png" alt="Logo BPS" className="h-6 md:h-7 w-auto object-contain -mr-1" />
               <span className="font-display font-bold text-xl text-gradient">SANTIK</span>
+
+              {/* QR Code hover popover */}
+              <div className="relative group">
+                {/* QR kecil – selalu tampil */}
+                <div className="w-9 h-9 bg-white rounded-lg p-0.5 cursor-pointer shadow-sm ring-1 ring-white/20 transition-transform duration-200 group-hover:scale-110">
+                  <QRCodeSVG
+                    value={window.location.origin}
+                    size={28}
+                    bgColor="#ffffff"
+                    fgColor="#03346E"
+                    level="Q"
+                  />
+                </div>
+
+                {/* Popover besar – muncul saat hover */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 z-50
+                  opacity-0 scale-90 pointer-events-none
+                  group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto
+                  transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                >
+                  {/* Arrow */}
+                  <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white rotate-45 rounded-sm shadow-sm" />
+
+                  <div className="bg-white rounded-2xl p-4 shadow-2xl flex flex-col items-center gap-3 w-48">
+                    <QRCodeSVG
+                      value={window.location.origin}
+                      size={152}
+                      bgColor="#ffffff"
+                      fgColor="#03346E"
+                      level="Q"
+                    />
+                    <p className="text-[11px] text-slate-500 text-center leading-relaxed font-medium">
+                      Scan untuk membuka<br />aplikasi SANTIK
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
             
             <div className="flex items-center gap-8">
