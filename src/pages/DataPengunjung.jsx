@@ -152,9 +152,6 @@ export default function DataPengunjung() {
       <RevealText>
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center">
-              <Users size={20} className="text-cyan-400" />
-            </div>
             <div>
               <h1 className="page-title">Data Pengunjung</h1>
               <p className="page-subtitle">Rekap harian &amp; bulanan (hari kerja)</p>

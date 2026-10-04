@@ -46,10 +46,11 @@ export default function Laporan() {
     if (reportType === 'PST') {
       wsData = rows.map((r,i) => ({
         No: i+1,
-        Nama: r.nama_lengkap, Email: r.email,
+        Nama: r.nama_lengkap, Email: r.email, Kontak: r.kontak,
         'Jenis Kelamin': r.jenis_kelamin,
-        Instansi: r.instansi, Kontak: r.kontak,
-        Layanan: r.layanan, Catatan: r.catatan || '-',
+        Pekerjaan: r.pekerjaan, Instansi: r.instansi, Alamat: r.alamat,
+        Layanan: r.layanan, Keperluan: r.keperluan,
+        'Pegawai Tujuan': r.pegawai_tujuan, Catatan: r.catatan || '-',
         'Waktu Masuk': r.waktu_masuk ? formatDate(r.waktu_masuk, 'dd-MM-yyyy HH:mm') : '-',
       }))
     } else {
@@ -78,29 +79,56 @@ export default function Laporan() {
 
     if (reportType === 'PST') {
       autoTable(doc, {
-        head: [['No','Nama','Email','JK','Instansi','Layanan','Waktu']],
+        head: [['No','Nama/Kontak/Email','JK','Instansi/Pekerjaan','Layanan/Keperluan','Tujuan/Catatan','Waktu','Tanda Tangan']],
         body: rows.map((r,i) => [
-          i+1, r.nama_lengkap, r.email, r.jenis_kelamin,
-          r.instansi, r.layanan,
+          i+1, 
+          `${r.nama_lengkap}\n${r.kontak}\n${r.email}`, 
+          r.jenis_kelamin === 'Laki-laki' ? 'L' : 'P',
+          `${r.instansi}\n${r.pekerjaan}`, 
+          `${r.layanan}\n${r.keperluan || '-'}`,
+          `${r.pegawai_tujuan}\n${r.catatan || '-'}`,
           r.waktu_masuk ? formatDate(r.waktu_masuk, 'dd-MM-yyyy') : '-',
+          ''
         ]),
         startY: 32,
-        styles: { fontSize: 7.5, cellPadding: 2 },
+        styles: { fontSize: 7, cellPadding: 2, valign: 'middle' },
         headStyles: { fillColor: [99,102,241], fontSize: 8 },
         alternateRowStyles: { fillColor: [245,245,255] },
+        didDrawCell: (data) => {
+          if (data.section === 'body' && data.column.index === 7) {
+            const r = rows[data.row.index]
+            if (r.tanda_tangan) {
+              doc.addImage(r.tanda_tangan, 'PNG', data.cell.x + 2, data.cell.y + 2, 20, 10)
+            }
+          }
+        },
+        bodyStyles: { minCellHeight: 15 }
       })
     } else {
       autoTable(doc, {
-        head: [['No','Nama','No Identitas','No WA','Instansi','Pekerjaan','Rincian Informasi','Waktu']],
+        head: [['No','Nama/Identitas/WA','Pekerjaan/Instansi/Alamat','Rincian & Tujuan','Cara Peroleh/Salinan','Waktu','Tanda Tangan']],
         body: rows.map((r,i) => [
-          i+1, r.nama_lengkap, r.no_identitas, r.no_wa,
-          r.instansi, r.pekerjaan, r.rincian_informasi,
+          i+1, 
+          `${r.nama_lengkap}\nID: ${r.no_identitas}\nWA: ${r.no_wa}`,
+          `${r.pekerjaan}\n${r.instansi}\n${r.alamat}`, 
+          `Info: ${r.rincian_informasi}\nTujuan: ${r.tujuan_penggunaan}`,
+          `Peroleh: ${r.cara_memperoleh}\nSalinan: ${r.cara_salinan}`,
           r.waktu_masuk ? formatDate(r.waktu_masuk, 'dd-MM-yyyy') : '-',
+          ''
         ]),
         startY: 32,
-        styles: { fontSize: 7.5, cellPadding: 2 },
+        styles: { fontSize: 7, cellPadding: 2, valign: 'middle' },
         headStyles: { fillColor: [99,102,241], fontSize: 8 },
         alternateRowStyles: { fillColor: [245,245,255] },
+        didDrawCell: (data) => {
+          if (data.section === 'body' && data.column.index === 6) {
+            const r = rows[data.row.index]
+            if (r.tanda_tangan) {
+              doc.addImage(r.tanda_tangan, 'PNG', data.cell.x + 2, data.cell.y + 2, 20, 10)
+            }
+          }
+        },
+        bodyStyles: { minCellHeight: 15 }
       })
     }
 
@@ -180,15 +208,15 @@ export default function Laporan() {
               <thead>
                 {reportType === 'PST' ? (
                   <tr>
-                    <th>No</th><th>Nama</th><th>Email</th><th>JK</th>
-                    <th>Instansi</th><th>Layanan</th>
-                    <th>Kontak</th><th>Catatan</th><th>Waktu</th>
+                    <th>No</th><th>Nama/Email/Kontak</th><th>JK</th>
+                    <th>Instansi/Pekerjaan</th><th>Layanan/Keperluan</th>
+                    <th>Tujuan/Catatan</th><th>Waktu</th><th>Tanda Tangan</th>
                   </tr>
                 ) : (
                   <tr>
-                    <th>No</th><th>Nama</th><th>No Identitas</th><th>No WA</th>
-                    <th>Pekerjaan</th><th>Instansi</th><th>Rincian Informasi</th>
-                    <th>Tujuan Penggunaan</th><th>Cara Peroleh</th><th>Waktu</th>
+                    <th>No</th><th>Nama/Identitas/WA</th>
+                    <th>Pekerjaan/Instansi/Alamat</th><th>Rincian Informasi</th>
+                    <th>Tujuan Penggunaan</th><th>Cara Peroleh</th><th>Waktu</th><th>Tanda Tangan</th>
                   </tr>
                 )}
               </thead>
@@ -200,28 +228,57 @@ export default function Laporan() {
                 ) : rows.map((r,i) => (
                   <tr key={r.id}>
                     <td className="text-white/40 text-xs">{i+1}</td>
-                    <td className="font-medium whitespace-nowrap">{r.nama_lengkap}</td>
                     {reportType === 'PST' ? (
                       <>
-                        <td className="text-xs text-white/60">{r.email}</td>
+                        <td className="text-xs">
+                          <p className="font-medium text-white">{r.nama_lengkap}</p>
+                          <p className="text-white/60 font-mono">{r.kontak}</p>
+                          <p className="text-white/40">{r.email}</p>
+                        </td>
                         <td><span className={`badge text-[10px] ${r.jenis_kelamin==='Laki-laki'?'badge-info':'badge-purple'}`}>{r.jenis_kelamin==='Laki-laki'?'L':'P'}</span></td>
-                        <td className="text-xs max-w-[140px] truncate">{r.instansi}</td>
-                        <td><span className="badge badge-default text-[10px] whitespace-nowrap">{r.layanan}</span></td>
-                        <td className="font-mono text-xs">{r.kontak}</td>
-                        <td className="text-xs text-white/50 max-w-[120px] truncate">{r.catatan || '-'}</td>
+                        <td className="text-xs max-w-[140px]">
+                          <p className="text-white/80">{r.instansi}</p>
+                          <p className="text-white/50">{r.pekerjaan}</p>
+                        </td>
+                        <td className="text-xs">
+                          <span className="badge badge-default text-[10px] mb-1 block w-max">{r.layanan}</span>
+                          <p className="text-white/50">{r.keperluan || '-'}</p>
+                        </td>
+                        <td className="text-xs max-w-[140px] truncate">
+                          <p className="text-white/80">{r.pegawai_tujuan}</p>
+                          <p className="text-white/50">{r.catatan || '-'}</p>
+                        </td>
                       </>
                     ) : (
                       <>
-                        <td className="text-xs text-white/60 font-mono">{r.no_identitas}</td>
-                        <td className="text-xs font-mono">{r.no_wa}</td>
-                        <td className="text-xs max-w-[120px] truncate">{r.pekerjaan}</td>
-                        <td className="text-xs max-w-[120px] truncate">{r.instansi}</td>
+                        <td className="text-xs">
+                          <p className="font-medium text-white">{r.nama_lengkap}</p>
+                          <p className="text-white/60 font-mono">ID: {r.no_identitas}</p>
+                          <p className="text-white/40 font-mono">WA: {r.no_wa}</p>
+                        </td>
+                        <td className="text-xs max-w-[140px]">
+                          <p className="text-white/80">{r.pekerjaan}</p>
+                          <p className="text-white/60">{r.instansi}</p>
+                          <p className="text-white/40 truncate" title={r.alamat}>{r.alamat}</p>
+                        </td>
                         <td className="text-xs max-w-[150px] truncate" title={r.rincian_informasi}>{r.rincian_informasi}</td>
                         <td className="text-xs max-w-[150px] truncate" title={r.tujuan_penggunaan}>{r.tujuan_penggunaan}</td>
-                        <td className="text-xs max-w-[100px] truncate">{r.cara_memperoleh}</td>
+                        <td className="text-xs max-w-[140px]">
+                          <p className="text-white/80 truncate">Peroleh: {r.cara_memperoleh}</p>
+                          <p className="text-white/50 truncate">Salinan: {r.cara_salinan}</p>
+                        </td>
                       </>
                     )}
                     <td className="text-xs whitespace-nowrap font-mono">{r.waktu_masuk ? formatDate(r.waktu_masuk,'dd-MM-yy HH:mm') : '-'}</td>
+                    <td>
+                      {r.tanda_tangan ? (
+                        <div className="bg-white/10 rounded overflow-hidden flex items-center justify-center p-1 w-16 h-8">
+                          <img src={r.tanda_tangan} alt="ttd" className="max-h-full max-w-full object-contain filter invert" />
+                        </div>
+                      ) : (
+                        <span className="text-white/20 text-[10px] italic">Tidak ada</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

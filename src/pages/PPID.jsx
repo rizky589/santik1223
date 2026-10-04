@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { BookOpen, CheckCircle2, Globe, Ticket, FileDown, FileEdit } from 'lucide-react'
+import { BookOpen, CheckCircle2, Globe, Ticket, FileDown, FileEdit, PenLine, Trash2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { RevealText, AnimatedCard, Toasts } from '../components/animations/Motion'
 import { useToast } from '../hooks/useToast'
@@ -33,6 +33,85 @@ const INIT = {
   tujuan_penggunaan: '',
   cara_memperoleh: CARA_MEMPEROLEH_LIST[0],
   cara_salinan: CARA_SALINAN_LIST[0],
+}
+
+// ── Signature Canvas Component ──────────────────────────────────
+function SignatureCanvas({ canvasRef }) {
+  const isDrawing = useRef(false)
+
+  const getPos = (e, canvas) => {
+    const rect = canvas.getBoundingClientRect()
+    const src  = e.touches ? e.touches[0] : e
+    return {
+      x: (src.clientX - rect.left) * (canvas.width  / rect.width),
+      y: (src.clientY - rect.top)  * (canvas.height / rect.height),
+    }
+  }
+
+  const startDraw = useCallback((e) => {
+    e.preventDefault()
+    isDrawing.current = true
+    const canvas = canvasRef.current
+    const ctx    = canvas.getContext('2d')
+    const pos    = getPos(e, canvas)
+    ctx.beginPath()
+    ctx.moveTo(pos.x, pos.y)
+  }, [canvasRef])
+
+  const draw = useCallback((e) => {
+    if (!isDrawing.current) return
+    e.preventDefault()
+    const canvas = canvasRef.current
+    const ctx    = canvas.getContext('2d')
+    const pos    = getPos(e, canvas)
+    ctx.lineWidth   = 2.5
+    ctx.lineCap     = 'round'
+    ctx.lineJoin    = 'round'
+    ctx.strokeStyle = '#a78bfa'
+    ctx.lineTo(pos.x, pos.y)
+    ctx.stroke()
+  }, [canvasRef])
+
+  const stopDraw = useCallback(() => {
+    isDrawing.current = false
+  }, [])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    canvas.addEventListener('mousedown',  startDraw)
+    canvas.addEventListener('mousemove',  draw)
+    canvas.addEventListener('mouseup',    stopDraw)
+    canvas.addEventListener('mouseleave', stopDraw)
+    canvas.addEventListener('touchstart', startDraw, { passive: false })
+    canvas.addEventListener('touchmove',  draw,      { passive: false })
+    canvas.addEventListener('touchend',   stopDraw)
+    return () => {
+      canvas.removeEventListener('mousedown',  startDraw)
+      canvas.removeEventListener('mousemove',  draw)
+      canvas.removeEventListener('mouseup',    stopDraw)
+      canvas.removeEventListener('mouseleave', stopDraw)
+      canvas.removeEventListener('touchstart', startDraw)
+      canvas.removeEventListener('touchmove',  draw)
+      canvas.removeEventListener('touchend',   stopDraw)
+    }
+  }, [startDraw, draw, stopDraw, canvasRef])
+
+  return (
+    <div className="relative">
+      <canvas
+        ref={canvasRef}
+        width={600}
+        height={160}
+        className="w-full rounded-xl border border-white/15 bg-white/5 cursor-crosshair touch-none"
+        style={{ height: '160px' }}
+      />
+      <div className="absolute bottom-6 left-6 right-6 border-b border-white/10 pointer-events-none" />
+      <p className="absolute bottom-2 left-0 right-0 text-center text-[10px] text-white/20 pointer-events-none">
+        Tanda tangan di sini
+      </p>
+    </div>
+  )
 }
 
 // ── Success Screen ───────────────────────────────────────────────
@@ -137,8 +216,17 @@ export default function PPID() {
   const [form,    setForm]         = useState(INIT)
   const [loading, setLoading]      = useState(false)
   const [tiket,   setTiket]        = useState(null)
+  
+  const canvasRef = useRef(null)
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+  }
 
   // Generate nomor antrian hari ini: A-001
   const getNextAntrianNo = async () => {
@@ -162,6 +250,20 @@ export default function PPID() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
+    // Validasi Tanda Tangan
+    const canvas = canvasRef.current
+    const isCanvasBlank = () => {
+      const blank = document.createElement('canvas')
+      blank.width = canvas.width
+      blank.height = canvas.height
+      return canvas.toDataURL() === blank.toDataURL()
+    }
+
+    if (isCanvasBlank()) {
+      return toast.warning('Mohon isi tanda tangan Anda terlebih dahulu.')
+    }
+    const ttd = canvas.toDataURL('image/png')
+
     // Validasi
     const wajib = ['nama_lengkap', 'no_identitas', 'no_wa', 'rincian_informasi', 'tujuan_penggunaan', 'alamat', 'pekerjaan']
     for (const key of wajib) {
@@ -194,6 +296,7 @@ export default function PPID() {
         tujuan_penggunaan: form.tujuan_penggunaan,
         cara_memperoleh: form.cara_memperoleh,
         cara_salinan: form.cara_salinan,
+        tanda_tangan: ttd,
         waktu_masuk: now,
         waktu_selesai: now,
         status: 'menunggu'
@@ -220,6 +323,7 @@ export default function PPID() {
         nama: form.nama_lengkap,
       })
       setForm(INIT)
+      clearCanvas()
     } catch (err) {
       toast.error('Gagal menyimpan: ' + err.message)
     } finally {
@@ -314,6 +418,18 @@ export default function PPID() {
             <select className="input-field" value={form.cara_salinan} onChange={e => set('cara_salinan', e.target.value)}>
               {CARA_SALINAN_LIST.map(l => <option key={l} value={l} className="bg-surface-2">{l}</option>)}
             </select>
+          </div>
+
+          <div className="border-t border-white/8 pt-1" />
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="input-label flex items-center gap-2"><PenLine size={14} /> Tanda Tangan *</label>
+              <button type="button" onClick={clearCanvas} className="text-[10px] flex items-center gap-1 text-red-400 hover:text-red-300 px-2 py-1 bg-red-400/10 rounded-lg transition-colors">
+                <Trash2 size={12} /> Hapus
+              </button>
+            </div>
+            <SignatureCanvas canvasRef={canvasRef} />
           </div>
 
           <motion.button type="submit" disabled={loading}
