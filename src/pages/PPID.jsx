@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { BookOpen, CheckCircle2, Globe, Ticket } from 'lucide-react'
+import { BookOpen, CheckCircle2, Globe, Ticket, FileDown, FileEdit } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { RevealText, AnimatedCard, Toasts } from '../components/animations/Motion'
 import { useToast } from '../hooks/useToast'
@@ -90,10 +90,11 @@ function SuccessScreen({ tiket, onBack }) {
             </motion.div>
             <div className="border-t border-white/8 pt-4 space-y-1.5">
               <p className="text-xs text-white/40">Jenis Layanan:</p>
-              <p className="text-sm font-semibold text-brand-300 flex items-center justify-center gap-1.5">
-                <Globe size={13} />
-                PPID (Informasi Publik)
+              <p className="text-sm font-semibold text-violet-400 flex items-center justify-center gap-1.5">
+                <FileEdit size={16} />
+                Permintaan Informasi Publik (PPID)
               </p>
+              <p className="text-xs italic text-white/40 mt-1">"tidak ada"</p>
             </div>
           </motion.div>
 
@@ -104,14 +105,26 @@ function SuccessScreen({ tiket, onBack }) {
             Mohon duduk di ruang tunggu. Nomor antrian akan ditampilkan di layar monitor.
           </motion.p>
 
-          <motion.button
-            onClick={onBack}
-            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-            className="btn-primary w-full py-3.5 text-sm font-bold"
-          >
-            Kembali ke Halaman Utama
-          </motion.button>
+          <div className="space-y-3">
+            <motion.a
+              href="/Formulir_Permintaan_PPID.pdf"
+              download="Formulir_Permintaan_PPID.pdf"
+              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+              className="btn-primary w-full py-3.5 text-sm font-bold flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-500 text-white"
+            >
+              <FileDown size={16} /> Download Formulir PPID
+            </motion.a>
+
+            <motion.button
+              onClick={onBack}
+              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
+              className="btn-primary w-full py-3.5 text-sm font-bold bg-blue-600 hover:bg-blue-500 border-none"
+            >
+              Kembali ke Halaman Utama
+            </motion.button>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -229,12 +242,9 @@ export default function PPID() {
 
       <RevealText>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">
-            <BookOpen size={20} className="text-violet-400" />
-          </div>
           <div>
-            <h1 className="page-title">PPID (Informasi Publik)</h1>
-            <p className="page-subtitle">Formulir Permohonan Informasi Publik</p>
+            <h1 className="page-title">Form Permohonan Informasi Publik</h1>
+            <p className="page-subtitle">Lengkapi data kunjungan anda</p>
           </div>
         </div>
       </RevealText>
