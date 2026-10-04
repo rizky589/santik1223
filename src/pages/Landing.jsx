@@ -6,6 +6,8 @@ import { QRCodeSVG } from 'qrcode.react'
 import Background3D from '../components/three/Background3D'
 import AccessibilityWidget from '../components/AccessibilityWidget'
 
+const SITE_URL = 'https://santik1223.vercel.app/'
+
 export default function Landing() {
   const navigate = useNavigate()
   const [qrOpen, setQrOpen] = useState(false)
@@ -111,6 +113,16 @@ export default function Landing() {
                 Sistem Antrian Statistik (SANTIK) memberikan kemudahan akses layanan PST dan PPID di BPS Kabupaten Labuhanbatu Utara.
                 Di website ini Anda dapat menemukan berbagai layanan yang kami sediakan dan informasi kontak yang dapat dihubungi. #MelayaniDenganHati❤️
               </p>
+              <div className="flex flex-col items-center gap-3 mb-6">
+                <motion.div
+                  whileHover={{ scale: 1.8 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                  className="bg-white p-2.5 rounded-2xl shadow-xl cursor-zoom-in relative z-20"
+                >
+                  <QRCodeSVG value={SITE_URL} size={96} bgColor="#ffffff" fgColor="#03346E" level="Q" />
+                </motion.div>
+                <p className="text-xs text-white/50 mt-2">Scan untuk akses cepat SANTIK</p>
+              </div>
               <div className="flex flex-wrap justify-center gap-4">
                 
               </div>
@@ -234,7 +246,7 @@ export default function Landing() {
               >
                 <div className="bg-white p-2 rounded-xl">
                   <QRCodeSVG 
-                    value={window.location.origin} 
+                    value={SITE_URL} 
                     size={110} 
                     bgColor={"#ffffff"}
                     fgColor={"#03346E"} // Biru BPS / dark blue
@@ -292,7 +304,7 @@ export default function Landing() {
               
               <div className="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 mb-6 w-full aspect-square flex items-center justify-center">
                 <QRCodeSVG 
-                  value={window.location.origin} 
+                  value={SITE_URL} 
                   size={250} 
                   bgColor={"#ffffff"}
                   fgColor={"#03346E"}
