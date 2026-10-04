@@ -160,9 +160,7 @@ export default function Laporan() {
 
       <RevealText>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-            <FileText size={20} className="text-emerald-400" />
-          </div>
+          
           <div>
             <h1 className="page-title">Laporan Data Pengunjung</h1>
             <p className="page-subtitle">Export data pelayanan PST & PPID ke PDF / Excel</p>

@@ -140,7 +140,7 @@ export default function Login() {
               {/* Turnstile Captcha */}
               <div className="flex justify-center mt-2">
                 <Turnstile
-                  siteKey="1x00000000000000000000AA" // GANTI DENGAN SITEKEY CLOUDFLARE ASLI MILIKMU
+                  siteKey="0x4AAAAAAFNgGClFG3dhjIsQ" // GANTI DENGAN SITEKEY CLOUDFLARE ASLI MILIKMU
                   onSuccess={(token) => setCaptchaToken(token)}
                   onError={() => setCaptchaToken(null)}
                   onExpire={() => setCaptchaToken(null)}
