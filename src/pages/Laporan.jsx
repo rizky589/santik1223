@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { FileText, Download, Filter, RefreshCw, Layers } from 'lucide-react'
+import { FileText, Download, Filter, RefreshCw, Layers, Trash2, Edit } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatDate } from '../lib/utils'
 import { RevealText, AnimatedCard, Toasts } from '../components/animations/Motion'
@@ -39,6 +39,19 @@ export default function Laporan() {
     if (error) toast.error('Gagal memuat data.')
     setRows(data || [])
     setLoading(false)
+  }
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Yakin ingin menghapus data ini?')) return
+    const tableName = reportType === 'PST' ? 'buku_tamu' : 'ppid_permohonan'
+    const { error } = await supabase.from(tableName).delete().eq('id', id)
+    if (error) return toast.error('Gagal menghapus data')
+    toast.success('Data berhasil dihapus')
+    fetchData()
+  }
+
+  const handleEdit = (id) => {
+    toast.info('Fitur edit segera hadir (masih dalam pengembangan)')
   }
 
   const downloadExcel = () => {
@@ -210,13 +223,13 @@ export default function Laporan() {
                   <tr>
                     <th>No</th><th>Nama/Email/Kontak</th><th>JK</th>
                     <th>Instansi/Pekerjaan</th><th>Layanan/Keperluan</th>
-                    <th>Tujuan/Catatan</th><th>Waktu</th><th>Tanda Tangan</th>
+                    <th>Tujuan/Catatan</th><th>Waktu</th><th>Tanda Tangan</th><th className="text-center">Aksi</th>
                   </tr>
                 ) : (
                   <tr>
                     <th>No</th><th>Nama/Identitas/WA</th>
                     <th>Pekerjaan/Instansi/Alamat</th><th>Rincian Informasi</th>
-                    <th>Tujuan Penggunaan</th><th>Cara Peroleh</th><th>Waktu</th><th>Tanda Tangan</th>
+                    <th>Tujuan Penggunaan</th><th>Cara Peroleh</th><th>Waktu</th><th>Tanda Tangan</th><th className="text-center">Aksi</th>
                   </tr>
                 )}
               </thead>
@@ -278,6 +291,16 @@ export default function Laporan() {
                       ) : (
                         <span className="text-white/20 text-[10px] italic">Tidak ada</span>
                       )}
+                    </td>
+                    <td>
+                      <div className="flex items-center justify-center gap-2">
+                        <button onClick={() => handleEdit(r.id)} className="p-1.5 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10 rounded-lg transition-colors" title="Edit Data">
+                          <Edit size={14} />
+                        </button>
+                        <button onClick={() => handleDelete(r.id)} className="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-colors" title="Hapus Data">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
