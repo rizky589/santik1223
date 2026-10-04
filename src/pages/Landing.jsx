@@ -1,11 +1,14 @@
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { LogIn, Users, FileText, ClipboardList, Calendar, MapPin, Phone, Mail, Clock } from 'lucide-react'
+import { LogIn, Users, FileText, ClipboardList, Calendar, MapPin, Phone, Mail, Clock, Maximize, X } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
 import Background3D from '../components/three/Background3D'
 import AccessibilityWidget from '../components/AccessibilityWidget'
 
 export default function Landing() {
   const navigate = useNavigate()
+  const [qrOpen, setQrOpen] = useState(false)
 
   const services = [
     {
@@ -170,50 +173,78 @@ export default function Landing() {
               </motion.p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Card Alamat */}
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
                 whileHover={{ scale: 1.05, y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.4)", transition: { type: "spring", stiffness: 400, damping: 25 } }}
-                className="glass-md p-8 rounded-2xl flex flex-col items-center text-center cursor-pointer"
+                className="glass-md p-6 rounded-2xl flex flex-col items-center text-center cursor-pointer"
               >
                 <div className="w-14 h-14 rounded-full bg-brand-500/20 flex items-center justify-center mb-4 text-brand-400">
                   <MapPin size={28} />
                 </div>
                 <h4 className="font-bold text-lg mb-2">Alamat</h4>
-                <p className="text-sm text-white/60">Jl. Lintas Sumatra<br/>Gunting Saga, Kualuh Selatan, Labuhanbatu Utara</p>
+                <p className="text-sm text-white/60">Jl. Lintas Sumatra<br/>Gunting Saga, Kualuh Selatan, Labura</p>
               </motion.div>
 
+              {/* Card Jam */}
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
                 whileHover={{ scale: 1.05, y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.4)", transition: { type: "spring", stiffness: 400, damping: 25 } }}
-                className="glass-md p-8 rounded-2xl flex flex-col items-center text-center cursor-pointer"
+                className="glass-md p-6 rounded-2xl flex flex-col items-center text-center cursor-pointer"
               >
                 <div className="w-14 h-14 rounded-full bg-violet-500/20 flex items-center justify-center mb-4 text-violet-400">
                   <Clock size={28} />
                 </div>
                 <h4 className="font-bold text-lg mb1">Jam Layanan</h4>
-                <p className="text-sm text-white/60"><br/>Senin (08.30 - 15.30 WIB) Jumat (08.30 - 16.00 WIB)</p>
+                <p className="text-sm text-white/60"><br/>Senin (08.30 - 15.30)<br/>Jumat (08.30 - 16.00)</p>
               </motion.div>
 
+              {/* Card Email */}
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 whileHover={{ scale: 1.05, y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.4)", transition: { type: "spring", stiffness: 400, damping: 25 } }}
-                className="glass-md p-8 rounded-2xl flex flex-col items-center text-center cursor-pointer"
+                className="glass-md p-6 rounded-2xl flex flex-col items-center text-center cursor-pointer"
               >
                 <div className="w-14 h-14 rounded-full bg-cyan-500/20 flex items-center justify-center mb-4 text-cyan-400">
                   <Mail size={28} />
                 </div>
                 <h4 className="font-bold text-lg mb-3">Email</h4>
                 <p className="text-sm text-white/60">bps1223@bps.go.id<br/></p>
+              </motion.div>
+
+              {/* Card QR Code */}
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                whileHover={{ scale: 1.05, y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.4)", transition: { type: "spring", stiffness: 400, damping: 25 } }}
+                className="bg-white p-6 rounded-2xl flex flex-col items-center text-center cursor-pointer justify-center gap-4 relative overflow-hidden"
+                onClick={() => setQrOpen(true)}
+              >
+                <div className="bg-white p-2 rounded-xl">
+                  <QRCodeSVG 
+                    value={window.location.origin} 
+                    size={110} 
+                    bgColor={"#ffffff"}
+                    fgColor={"#03346E"} // Biru BPS / dark blue
+                    level={"Q"}
+                  />
+                </div>
+                <div className="flex items-center gap-1.5 text-slate-500 font-medium bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 w-full justify-center hover:bg-slate-100 transition-colors">
+                  <Maximize size={15} />
+                  <span>Perbesar</span>
+                </div>
               </motion.div>
             </div>
           </div>
@@ -229,6 +260,54 @@ export default function Landing() {
 
       {/* Aksesibilitas Widget */}
       <AccessibilityWidget />
+
+      {/* Modal QR Code */}
+      <AnimatePresence>
+        {qrOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setQrOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-pointer"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative bg-white rounded-3xl p-8 sm:p-12 shadow-2xl flex flex-col items-center max-w-md w-full"
+            >
+              <button 
+                onClick={() => setQrOpen(false)}
+                className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
+              >
+                <X size={20} />
+              </button>
+              
+              <div className="flex items-center gap-2 mb-8">
+                <img src="/assets/logo_bps.png" alt="Logo" className="h-8 object-contain" />
+                <h3 className="text-slate-800 font-display font-black text-2xl">SANTIK</h3>
+              </div>
+              
+              <div className="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 mb-6 w-full aspect-square flex items-center justify-center">
+                <QRCodeSVG 
+                  value={window.location.origin} 
+                  size={250} 
+                  bgColor={"#ffffff"}
+                  fgColor={"#03346E"}
+                  level={"Q"}
+                  style={{ width: '100%', height: '100%' }}
+                />
+              </div>
+              
+              <p className="text-slate-500 text-center font-medium">
+                Scan QR Code untuk membuka aplikasi SANTIK di perangkat Anda.
+              </p>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
