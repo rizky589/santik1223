@@ -113,16 +113,6 @@ export default function Landing() {
                 Sistem Antrian Statistik (SANTIK) memberikan kemudahan akses layanan PST dan PPID di BPS Kabupaten Labuhanbatu Utara.
                 Di website ini Anda dapat menemukan berbagai layanan yang kami sediakan dan informasi kontak yang dapat dihubungi. #MelayaniDenganHati❤️
               </p>
-              <div className="flex flex-col items-center gap-3 mb-6">
-                <motion.div
-                  whileHover={{ scale: 1.8 }}
-                  transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-                  className="bg-white p-2.5 rounded-2xl shadow-xl cursor-zoom-in relative z-20"
-                >
-                  <QRCodeSVG value={SITE_URL} size={96} bgColor="#ffffff" fgColor="#03346E" level="Q" />
-                </motion.div>
-                <p className="text-xs text-white/50 mt-2">Scan untuk akses cepat SANTIK</p>
-              </div>
               <div className="flex flex-wrap justify-center gap-4">
                 
               </div>
