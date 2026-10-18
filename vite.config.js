@@ -2,7 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: '/santik/',
+  // Jika di Vercel pakai '/', jika di VPS pakai '/santik/'
+  base: process.env.VERCEL ? '/' : '/santik/',
   plugins: [react()],
   resolve: {
     alias: {
