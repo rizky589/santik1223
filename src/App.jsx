@@ -28,7 +28,7 @@ function PrivateRoute({ children }) {
 
 export default function App() {
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <BrowserRouter basename="/santik">
       <Routes>
         {/* Public */}
         <Route path="/"      element={<Landing />} />

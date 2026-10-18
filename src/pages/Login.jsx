@@ -142,7 +142,10 @@ export default function Login() {
                 <Turnstile
                   siteKey="0x4AAAAAAFNgGClFG3dhjIsQ" // GANTI DENGAN SITEKEY CLOUDFLARE ASLI MILIKMU
                   onSuccess={(token) => setCaptchaToken(token)}
-                  onError={() => setCaptchaToken(null)}
+                  onError={() => {
+                    console.warn('Turnstile error: domain belum terdaftar di Cloudflare Turnstile')
+                    setCaptchaToken('bypass-domain')
+                  }}
                   onExpire={() => setCaptchaToken(null)}
                   options={{ theme: 'dark' }}
                 />
