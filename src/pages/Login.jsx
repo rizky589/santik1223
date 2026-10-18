@@ -140,7 +140,7 @@ export default function Login() {
               {/* Turnstile Captcha */}
               <div className="flex justify-center mt-2">
                 <Turnstile
-                  siteKey="0x4AAAAAAFNgGClFG3dhjIsQ" // GANTI DENGAN SITEKEY CLOUDFLARE ASLI MILIKMU
+                  siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || "0x4AAAAAAFaVXqTU0kTYj-_X"}
                   onSuccess={(token) => setCaptchaToken(token)}
                   onError={() => {
                     console.warn('Turnstile error: domain belum terdaftar di Cloudflare Turnstile')
