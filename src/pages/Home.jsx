@@ -23,7 +23,7 @@ export default function Home() {
   const today = todayString()
 
   useEffect(() => {
-    fetch('/assets/statistik.json').then(r => r.json()).then(setLottie).catch(() => {})
+    fetch(`${import.meta.env.BASE_URL}assets/statistik.json`).then(r => r.json()).then(setLottie).catch(() => {})
     fetchStats()
   }, [])
 

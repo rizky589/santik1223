@@ -111,7 +111,7 @@ export default function Presensi() {
     try {
       // Trying to add image if it exists in public
       const img = new Image()
-      img.src = '/assets/logo_bps.png'
+      img.src = `${import.meta.env.BASE_URL}assets/logo_bps.png`
       await new Promise((resolve) => {
         img.onload = () => {
           doc.addImage(img, 'PNG', 12, 10, 20, 16)

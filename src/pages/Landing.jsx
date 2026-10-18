@@ -6,7 +6,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import Background3D from '../components/three/Background3D'
 import AccessibilityWidget from '../components/AccessibilityWidget'
 
-const SITE_URL = 'https://santik1223.vercel.app/'
+const SITE_URL = typeof window !== 'undefined' ? (window.location.origin + import.meta.env.BASE_URL) : 'https://bpslabura.web.id/santik/'
 
 export default function Landing() {
   const navigate = useNavigate()
@@ -55,7 +55,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-left">
-              <img src="/assets/logo_bps.png" alt="Logo BPS" className="h-6 md:h-7 w-auto object-contain -mr-1" />
+              <img src={`${import.meta.env.BASE_URL}assets/logo_bps.png`} alt="Logo BPS" className="h-6 md:h-7 w-auto object-contain -mr-1" />
               <span className="font-display font-bold text-xl text-gradient">SANTIK</span>
             </div>
             
@@ -100,8 +100,8 @@ export default function Landing() {
         <section className="min-h-[80vh] flex flex-col items-center justify-center px-4 text-center">
           <div className="max-w-3xl">
             <div className="flex items-center justify-center gap-6 mb-8">
-              <img src="/assets/ppid.png" alt="PPID" className="h-16 md:h-20 object-contain" />
-              <img src="/assets/pst2.png" alt="PST2" className="h-20 md:h-28 object-contain" />
+              <img src={`${import.meta.env.BASE_URL}assets/ppid.png`} alt="PPID" className="h-16 md:h-20 object-contain" />
+              <img src={`${import.meta.env.BASE_URL}assets/pst2.png`} alt="PST2" className="h-20 md:h-28 object-contain" />
             </div>
             
             <motion.div
@@ -291,7 +291,7 @@ export default function Landing() {
               </button>
               
               <div className="flex items-center gap-2 mb-8">
-                <img src="/assets/logo_bps.png" alt="Logo" className="h-8 object-contain" />
+                <img src={`${import.meta.env.BASE_URL}assets/logo_bps.png`} alt="Logo" className="h-8 object-contain" />
                 <h3 className="text-slate-800 font-display font-black text-2xl">SANTIK</h3>
               </div>
               

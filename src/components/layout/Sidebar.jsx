@@ -83,7 +83,7 @@ export default function Sidebar({ open, onClose }) {
         <div className="flex items-center justify-between px-5 py-5 border-b border-white/8">
           <div className="flex items-center gap-1">
             <div className="w-8 h-8 flex items-center justify-center">
-              <img src="/assets/logo_bps.png" alt="Logo BPS" className="w-full h-full object-contain drop-shadow-md" />
+              <img src={`${import.meta.env.BASE_URL}assets/logo_bps.png`} alt="Logo BPS" className="w-full h-full object-contain drop-shadow-md" />
             </div>
             <div>
               <p className="font-display font-bold text-white text-sm leading-none">SANTIK</p>

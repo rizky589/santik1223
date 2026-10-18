@@ -24,7 +24,7 @@ export default function PublicLayout() {
               onClick={() => navigate('/')}
               className="flex items-center gap-1 text-white/70 hover:text-white transition-colors cursor-pointer"
             >
-              <img src="/assets/logo_bps.png" alt="Logo BPS" className="h-6 md:h-7 w-auto object-contain -mr-1" />
+              <img src={`${import.meta.env.BASE_URL}assets/logo_bps.png`} alt="Logo BPS" className="h-6 md:h-7 w-auto object-contain -mr-1" />
               <span className="font-display font-bold text-xl text-gradient">SANTIK</span>
             </button>
 

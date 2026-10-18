@@ -33,7 +33,7 @@ export default function Login() {
 
   // Load statistik lottie
   useEffect(() => {
-    fetch('/assets/statistik.json')
+    fetch(`${import.meta.env.BASE_URL}assets/statistik.json`)
       .then(r => r.json())
       .then(setLottieData)
       .catch(() => setLottieData(fallbackLottie))
@@ -79,7 +79,7 @@ export default function Login() {
             {/* Header Centered */}
             <div className="flex flex-col items-center text-center gap-2 mb-5">
               <div className="w-14 h-14 flex items-center justify-center mb-1">
-                <img src="/assets/logo_bps.png" alt="Logo BPS" className="w-full h-full object-contain drop-shadow-md" />
+                <img src={`${import.meta.env.BASE_URL}assets/logo_bps.png`} alt="Logo BPS" className="w-full h-full object-contain drop-shadow-md" />
               </div>
               <div>
                 <h2 className="font-display font-bold text-white text-xl leading-none">Login Petugas</h2>

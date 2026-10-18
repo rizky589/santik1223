@@ -186,7 +186,7 @@ function SuccessScreen({ tiket, onBack }) {
 
           <div className="space-y-3">
             <motion.a
-              href="/Formulir_Permintaan_PPID.pdf"
+              href={`${import.meta.env.BASE_URL}Formulir_Permintaan_PPID.pdf`}
               download="Formulir_Permintaan_PPID.pdf"
               whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
