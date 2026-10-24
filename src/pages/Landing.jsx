@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { LogIn, Users, FileText, ClipboardList, Calendar, MapPin, Phone, Mail, Clock, Maximize, X } from 'lucide-react'
+import { LogIn, Users, FileText, ClipboardList, Calendar, MapPin, Phone, Mail, Clock, Maximize, X, Menu } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 import Background3D from '../components/three/Background3D'
 import AccessibilityWidget from '../components/AccessibilityWidget'
@@ -11,6 +11,7 @@ const SITE_URL = typeof window !== 'undefined' ? (window.location.origin + impor
 export default function Landing() {
   const navigate = useNavigate()
   const [qrOpen, setQrOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const services = [
     {
@@ -54,43 +55,71 @@ export default function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-left">
-              <img src={`${import.meta.env.BASE_URL}assets/logo_bps.png`} alt="Logo BPS" className="h-6 md:h-7 w-auto object-contain -mr-1" />
+            {/* Logo */}
+            <div className="flex items-center gap-1">
+              <img src={`${import.meta.env.BASE_URL}assets/logo_bps.png`} alt="Logo BPS" className="h-6 md:h-7 w-auto object-contain" />
               <span className="font-display font-bold text-xl text-gradient">SANTIK</span>
             </div>
-            
-            <div className="flex items-center gap-8">
-            <div className="hidden md:flex items-center gap-8">
-                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
-                  Beranda
-                </button>
-                <button onClick={() => scrollToSection('layanan')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
-                  Layanan
-                </button>
-                <button onClick={() => navigate('/buku-tamu')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
-                  Buku Tamu Digital
-                </button>
-                <button onClick={() => navigate('/ppid')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
-                  PPID (Informasi Publik)
-                </button>
-                <button onClick={() => navigate('/data-pengunjung')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
-                  Statistik Data Pengunjung
-                </button>
-                <button onClick={() => scrollToSection('kontak')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">
-                  Kontak
-                </button>
-              </div>
 
-
-              <button 
-                onClick={() => navigate('/login')}
-                className="btn-primary py-2 px-4"
-              >
+            {/* Desktop Menu */}
+            <div className="hidden md:flex items-center gap-6">
+              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">Beranda</button>
+              <button onClick={() => scrollToSection('layanan')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">Layanan</button>
+              <button onClick={() => navigate('/buku-tamu')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">Buku Tamu</button>
+              <button onClick={() => navigate('/ppid')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">PPID</button>
+              <button onClick={() => navigate('/data-pengunjung')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">Data Pengunjung</button>
+              <button onClick={() => scrollToSection('kontak')} className="text-white/70 hover:text-white text-sm font-medium transition-colors cursor-pointer">Kontak</button>
+              <button onClick={() => navigate('/login')} className="btn-primary py-2 px-4">
                 <LogIn size={16} /> Login
+              </button>
+            </div>
+
+            {/* Mobile: Login + Hamburger */}
+            <div className="flex md:hidden items-center gap-2">
+              <button onClick={() => navigate('/login')} className="btn-primary py-1.5 px-3 text-sm">
+                <LogIn size={14} /> Login
+              </button>
+              <button
+                onClick={() => setMobileMenuOpen(prev => !prev)}
+                className="p-2 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden overflow-hidden glass border-t border-white/10"
+            >
+              <div className="flex flex-col px-4 py-3 gap-1">
+                {[
+                  { label: 'Beranda', action: () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setMobileMenuOpen(false) } },
+                  { label: 'Layanan', action: () => { scrollToSection('layanan'); setMobileMenuOpen(false) } },
+                  { label: 'Buku Tamu Digital', action: () => { navigate('/buku-tamu'); setMobileMenuOpen(false) } },
+                  { label: 'PPID (Informasi Publik)', action: () => { navigate('/ppid'); setMobileMenuOpen(false) } },
+                  { label: 'Statistik Data Pengunjung', action: () => { navigate('/data-pengunjung'); setMobileMenuOpen(false) } },
+                  { label: 'Kontak', action: () => { scrollToSection('kontak'); setMobileMenuOpen(false) } },
+                ].map(item => (
+                  <button
+                    key={item.label}
+                    onClick={item.action}
+                    className="text-left px-3 py-2.5 rounded-lg text-white/80 hover:text-white hover:bg-white/10 text-sm font-medium transition-colors"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Main Content */}
